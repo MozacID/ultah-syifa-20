@@ -156,7 +156,7 @@
 
     <div class="scene" id="scene-input">
         <p style="letter-spacing: 2px; font-size: 0.9rem; margin-bottom: 10px; color: var(--text-gold);">VERIFIKASI duluu yaaa</p>
-        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px;">Coba masukkin tanggal lahirnyaa</h2>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px;">Coba masukkan tanggal lahirnyaa</h2>
         <div class="input-group">
             <input type="date" id="birthdate" class="date-input" required>
             <button class="btn-start" style="margin-top: 10px;" onclick="validateDate()">KONFIRMASI</button>
@@ -192,7 +192,7 @@
                 <div class="blow-meter-container" id="meter-cont"><div id="blow-meter-fill"></div></div>
             </div>
             <div id="wish-confirmation">
-                <p class="conf-question">sudah selesai make a wish nyaa?</p>
+                <p class="conf-question">sudah make a wish belumm?</p>
                 <div class="btn-group">
                     <button class="btn-option" onclick="handleBelum()">belummm</button>
                     <button class="btn-option" onclick="handleSudah()">sudahhhh</button>
@@ -204,7 +204,7 @@
     <div class="scene" id="scene-3">
         <div id="envelope-wrapper" onclick="triggerZoom()">
             <div class="static-envelope">
-                <div class="env-label">Untuk: sabilah</div>
+                <div class="env-label">Untuk: Sabilah</div>
             </div>
         </div>
         <p class="envelope-hint-text" id="env-hint">[ Tap amplopnya buat liatt ]</p>
@@ -214,12 +214,12 @@
         </div>
 
         <div id="click-layer" class="clickable-area" style="display: none;" onclick="launchFirework(event)"></div>
-        <p id="hint-text">[ Tap latar belakang untuk merayakan ]</p>
+        <p id="hint-text">[ Coba tap background dehh ]</p>
     </div>
 
     <script>
         // TEKS UCAPAN BARU KAMU
-        const messageText = `Haiii, Syifa Shalsabilah.\n\nYEAYY sudah 29 Januari 2026. Selamat ulang tahun yang ke-20 yaaa.\n\nTidak terasa waktu berjalan begitu cepat, dari 2006 hingga sekarang lu sekarang sudah menginjak usia kepala dua lohh, HEHEHEHEHE.\n\nSemoga di usia yang bertambah ini, lu akan semakin bahagia, dimudahkan segala urusan terutama di masa perkuliahan ini, dan selalu dikelilingi hal-hal yang baik. Semoga tahun ini juga menjadi tahun yang paling membahagiakan dan penuh dengan kejutan manis buat lu yaaa.\n\nTerima kasih sudah menjadi Syifa Shalsabilah yang gua kenal baik, happy, ceria dan hangat selama ini.\n\nHappy Birthday & Enjoyy your special day!.\n\n- Yudewo`;
+        const messageText = `Haiii, Syifa Shalsabilah.\n\nYEAYY sudah 29 Januari 2026. Selamat ulang tahun yang ke-20 yaaa.\n\nTidak terasa waktu berjalan begitu cepat, dari 2006 hingga sekarang lu udah menginjak usia kepala dua lohh, HEHEHEHEHE.\n\nSemoga di usia yang bertambah ini, lu akan semakin bahagia, selalu diberikan kesehatan, dimudahkan segala urusan terutama di masa perkuliahan ini, dan selalu dikelilingi hal-hal yang baik. Semoga tahun ini juga menjadi tahun yang paling membahagiakan dan penuh dengan kejutan manis buat lu yaaa.\n\nTerima kasih sudah menjadi Syifa Shalsabilah yang gua kenal baik, happy, ceria dan hangat selama ini.\n\nHappy Birthday & Enjoyy your special day!.\n\n- Yudewo`;
         
         const audio = document.getElementById('bgm');
         audio.volume = 0.5; 
@@ -363,4 +363,5 @@
         window.addEventListener('resize', () => { fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight; }); animateFireworks();
     </script>
 </body>
+
 </html>
