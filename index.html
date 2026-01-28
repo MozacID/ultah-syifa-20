@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Untuk Syifa Shalsabilah</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-gold: #d4af37;
+            --burgundy: #800020;
+            --paper-color: #fffdf0;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh; height: 100dvh; width: 100vw;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            position: fixed; top: 0; left: 0;
+        }
+
+        .bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #canvas-bg { z-index: -1; } 
+        #fireworks { z-index: 99; }
+
+        .scene {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 2rem;
+            padding-top: calc(2rem + var(--safe-top));
+            padding-bottom: calc(2rem + var(--safe-bottom));
+            opacity: 0; pointer-events: none;
+            transition: opacity 1s ease-in-out; z-index: 10;
+        }
+        .scene.active { opacity: 1; pointer-events: auto; }
+
+        /* TYPOGRAPHY */
+        h1.main-title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--text-gold); font-weight: 300; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        p.instructions { font-size: 1rem; line-height: 1.6; color: #ddd; max-width: 85%; margin: 0 auto; }
+        .btn-start { margin-top: 30px; padding: 15px 40px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--text-gold); color: var(--text-gold); border-radius: 50px; font-size: 0.9rem; letter-spacing: 3px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; font-weight: 600; }
+        .btn-start:active { transform: scale(0.95); background: rgba(212, 175, 55, 0.3); }
+
+        /* INPUT DATE & TIMELINE */
+        .input-group { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .date-input { background: transparent; border: 1px solid #555; color: var(--text-gold); padding: 12px 20px; font-family: 'Montserrat', sans-serif; font-size: 1.2rem; text-align: center; border-radius: 10px; outline: none; width: 250px; letter-spacing: 2px; color-scheme: dark; }
+        
+        #yeay-text { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--text-gold); margin-bottom: 0px; opacity: 0; transition: opacity 0.5s ease; }
+        #year-counter { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 600; color: var(--text-gold); transition: transform 0.1s; }
+        #sub-counter { font-size: 1rem; letter-spacing: 5px; text-transform: uppercase; opacity: 0.7; margin-top: 10px; }
+        
+        .reminder-text { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--text-gold); letter-spacing: 1px; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.05); } }
+
+        /* CAKE STYLES */
+        .cake-header { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--text-gold); margin-bottom: 10px; letter-spacing: 2px; }
+        .cake-container { position: relative; width: 280px; height: 200px; margin-top: 30px; margin-bottom: 30px; cursor: pointer; }
+        .cake-base { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 240px; height: 120px; background: linear-gradient(to right, #eacda3, #d6ae7b); border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 5px 10px rgba(255,255,255,0.2); z-index: 1; }
+        .cake-base::after { content: ''; position: absolute; top: -10px; left: -5%; width: 110%; height: 30px; background: #fff5e1; border-radius: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); z-index: 2; }
+        .candles-group { position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%); display: flex; gap: 35px; align-items: flex-end; z-index: 10; }
+        .candle-stick { position: relative; width: 20px; height: 80px; background: linear-gradient(to right, #f0f0f0, #e0e0e0, #f0f0f0); border-radius: 3px; box-shadow: inset 0 -5px 5px rgba(0,0,0,0.1); }
+        .candle-stick::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 2px; height: 10px; background: #333; }
+        .real-flame { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); width: 16px; height: 30px; border-radius: 50% 50% 20% 20%; background: rgba(255, 200, 0, 0.9); box-shadow: 0 0 10px rgba(255, 150, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); animation: flickerRealistic 0.1s infinite alternate; transform-origin: bottom center; opacity: 1; transition: opacity 0.3s ease, transform 0.3s ease; }
+        .real-flame.blowing { animation: none; transform: translateX(-50%) scale(0.8) skewX(10deg) rotate(5deg); opacity: 0.8; }
+        .real-flame.out { animation: none !important; opacity: 0 !important; transform: translateX(-50%) scale(0.1); }
+        .smoke { position: absolute; top: -40px; left: 50%; transform: translateX(-50%) scale(0.5); width: 30px; height: 50px; opacity: 0; filter: blur(5px); background: radial-gradient(ellipse at center, rgba(200,200,200,0.8) 0%, rgba(255,255,255,0) 70%); pointer-events: none; }
+        .smoke.puff { animation: smokeRise 1.5s forwards ease-out; }
+        @keyframes flickerRealistic { 0% { transform: translateX(-50%) scale(1); opacity: 1; } 100% { transform: translateX(-51%) scale(0.95) rotate(1deg); opacity: 0.9; } }
+        @keyframes smokeRise { 0% { opacity: 0.6; transform: translateX(-50%) scale(0.5) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) scale(2) translateY(-60px); } }
+        #cake-status-text { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--text-gold); margin-bottom: 20px; min-height: 2.5rem; transition: all 0.5s ease; }
+        .interaction-area { position: relative; width: 100%; height: 100px; display: flex; justify-content: center; align-items: flex-start; }
+        #mic-container, #wish-confirmation { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; transition: opacity 0.8s ease, transform 0.8s ease; }
+        #mic-container { opacity: 1; transform: translateY(0); }
+        #mic-hint { font-size: 0.9rem; color: var(--text-gold); letter-spacing: 1px; margin-bottom: 10px; opacity: 0.8; }
+        .blow-meter-container { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
+        #blow-meter-fill { height: 100%; width: 0%; background: var(--text-gold); transition: width 0.1s; }
+        #wish-confirmation { opacity: 0; transform: translateY(20px); pointer-events: none; }
+        #wish-confirmation.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .conf-question { margin-bottom: 15px; font-size: 1rem; color: #ddd; }
+        .btn-group { display: flex; gap: 20px; }
+        .btn-option { padding: 10px 30px; border: 1px solid var(--text-gold); background: transparent; color: var(--text-gold); font-family: 'Montserrat', sans-serif; border-radius: 20px; cursor: pointer; text-transform: lowercase; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-option:hover { background: var(--text-gold); color: #000; }
+        .toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 20, 0.9); border: 1px solid var(--text-gold); padding: 15px 25px; border-radius: 30px; color: #fff; font-size: 0.9rem; opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 100; text-align: center; width: 80%; max-width: 300px; }
+
+        /* --- CINEMATIC ENVELOPE STYLES --- */
+        #envelope-wrapper { position: relative; cursor: pointer; transition: transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 1s ease; z-index: 20; }
+        .static-envelope { width: 300px; height: 200px; background-color: var(--burgundy); position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; }
+        .static-envelope::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background-color: #900028; clip-path: polygon(0 0, 50% 40%, 100% 0, 100% 100%, 0 100%); z-index: 2; }
+        .static-envelope::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background-color: #700018; clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 3; }
+        .env-label { z-index: 10; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; background: #fff; color: #333; padding: 5px 15px; transform: rotate(-2deg); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* KERTAS SURAT (PERBAIKAN Z-INDEX AGAR BISA SCROLL) */
+        #paper-view { 
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5); 
+            width: 90%; max-width: 500px; height: 70vh; 
+            background-color: var(--paper-color); 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+            padding: 40px; text-align: left; 
+            opacity: 0; pointer-events: none; 
+            transition: all 1.5s cubic-bezier(0.25, 0.1, 0.25, 1); 
+            z-index: 200; /* PENTING: Layer paling atas */
+            overflow-y: auto; /* Agar bisa discroll */
+            touch-action: pan-y;
+        }
+        
+        .scene.zoomed #envelope-wrapper { transform: scale(5); opacity: 0; pointer-events: none; }
+        .scene.zoomed #paper-view { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+        .paper-content { 
+            color: #333; font-family: 'Cormorant Garamond', serif; 
+            font-size: 1.2rem; line-height: 1.8; font-weight: 600; 
+            white-space: pre-wrap; /* Agar enter terbaca */
+        }
+        
+        #paper-view .cursor { background-color: #333 !important; }
+
+        .envelope-hint-text { margin-top: 20px; font-size: 0.8rem; color: var(--text-gold); opacity: 0.7; }
+        
+        /* Hint untuk kembang api (z-index tinggi biar kelihatan) */
+        #hint-text { position: absolute; bottom: calc(20px + var(--safe-bottom)); width: 100%; text-align: center; opacity: 0; font-size: 0.75rem; color: var(--text-gold); letter-spacing: 1px; z-index: 201; }
+
+        /* Cursor Default (Gold) */
+        .cursor { display: inline-block; width: 2px; height: 1.2em; background-color: var(--text-gold); animation: blink 1s infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* LAYER KLIK (Dibawah Kertas) */
+        .clickable-area { position: absolute; width: 100%; height: 100%; top:0; left:0; z-index: 98; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        
+        @media (max-width: 400px) { h1.main-title { font-size: 2.2rem; } #year-counter { font-size: 4rem; } .cake-header { font-size: 2.5rem; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop preload="auto">
+        <source src="musik.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="canvas-bg" class="bg-layer"></canvas>
+    <canvas id="fireworks" class="bg-layer"></canvas>
+    <div id="custom-toast" class="toast">okeeeeiiiii, make a wish dulu baru nanti kita lanjut yaaaa</div>
+
+    <div class="scene active" id="scene-1">
+        <p style="letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 15px; text-transform: uppercase; color: var(--text-gold);">Special For You</p>
+        <h1 class="main-title">Syifa Shalsabilah</h1>
+        <p class="instructions">(Nyalakan volume suara)</p>
+        <button class="btn-start" onclick="goToInput()">BUKA PESAN</button>
+    </div>
+
+    <div class="scene" id="scene-input">
+        <p style="letter-spacing: 2px; font-size: 0.9rem; margin-bottom: 10px; color: var(--text-gold);">VERIFIKASI duluu yaaa</p>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px;">Coba masukkin tanggal lahirnyaa</h2>
+        <div class="input-group">
+            <input type="date" id="birthdate" class="date-input" required>
+            <button class="btn-start" style="margin-top: 10px;" onclick="validateDate()">KONFIRMASI</button>
+        </div>
+    </div>
+
+    <div class="scene" id="scene-2">
+        <h2 id="yeay-text">YEAYY, sudahhh</h2>
+        <div id="year-counter">2006</div>
+        <div id="sub-counter">LOADING JOURNEY...</div>
+    </div>
+
+    <div class="scene" id="scene-reminder">
+        <h2 class="reminder-text">jangan lupa make a wishh yaaa</h2>
+    </div>
+
+    <div class="scene" id="scene-cake">
+        <h1 class="cake-header">HAPPY BIRTHDAY</h1>
+        <div class="cake-container" onclick="forceBlowOut()">
+            <div class="candles-group">
+                <div class="candle-stick"><div class="real-flame"></div><div class="smoke"></div></div>
+                <div class="candle-stick" style="height: 90px;"><div class="real-flame"></div><div class="smoke"></div></div>
+                <div class="candle-stick"><div class="real-flame"></div><div class="smoke"></div></div>
+            </div>
+            <div class="cake-base"></div>
+        </div>
+        
+        <h2 id="cake-status-text">Yaumul milad, bilaaa</h2>
+
+        <div class="interaction-area">
+            <div id="mic-container">
+                <p id="mic-hint">Tiup mic yang panjang atau ketuk kue...</p>
+                <div class="blow-meter-container" id="meter-cont"><div id="blow-meter-fill"></div></div>
+            </div>
+            <div id="wish-confirmation">
+                <p class="conf-question">sudah selesai make a wish nyaa?</p>
+                <div class="btn-group">
+                    <button class="btn-option" onclick="handleBelum()">belummm</button>
+                    <button class="btn-option" onclick="handleSudah()">sudahhhh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scene" id="scene-3">
+        <div id="envelope-wrapper" onclick="triggerZoom()">
+            <div class="static-envelope">
+                <div class="env-label">Untuk: sabilah</div>
+            </div>
+        </div>
+        <p class="envelope-hint-text" id="env-hint">[ Tap amplopnya buat liatt ]</p>
+
+        <div id="paper-view">
+            <div id="letter-content" class="paper-content"></div><span class="cursor"></span>
+        </div>
+
+        <div id="click-layer" class="clickable-area" style="display: none;" onclick="launchFirework(event)"></div>
+        <p id="hint-text">[ Tap latar belakang untuk merayakan ]</p>
+    </div>
+
+    <script>
+        // TEKS UCAPAN BARU KAMU
+        const messageText = `Haiii, Syifa Shalsabilah.\n\nYEAYY sudah 29 Januari 2026. Selamat ulang tahun yang ke-20 yaaa.\n\nTidak terasa waktu berjalan begitu cepat, dari 2006 hingga sekarang lu sekarang sudah menginjak usia kepala dua lohh, HEHEHEHEHE.\n\nSemoga di usia yang bertambah ini, lu akan semakin bahagia, dimudahkan segala urusan terutama di masa perkuliahan ini, dan selalu dikelilingi hal-hal yang baik. Semoga tahun ini juga menjadi tahun yang paling membahagiakan dan penuh dengan kejutan manis buat lu yaaa.\n\nTerima kasih sudah menjadi Syifa Shalsabilah yang gua kenal baik, happy, ceria dan hangat selama ini.\n\nHappy Birthday & Enjoyy your special day!.\n\n- Yudewo`;
+        
+        const audio = document.getElementById('bgm');
+        audio.volume = 0.5; 
+
+        // --- NAVIGATION ---
+        function goToInput() {
+            audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(e => console.log("Audio permission pending"));
+            document.getElementById('scene-1').classList.remove('active');
+            setTimeout(() => { document.getElementById('scene-input').classList.add('active'); }, 500);
+        }
+        function validateDate() {
+            const inputDate = document.getElementById('birthdate').value;
+            if (inputDate === "2006-01-29") { startJourney(); } else { alert("yakinn tanggal lahirnya sudahh benerr nihh?"); }
+        }
+        function startJourney() {
+            audio.play(); initMicrophone(); 
+            document.getElementById('scene-input').classList.remove('active');
+            setTimeout(() => { document.getElementById('scene-2').classList.add('active'); runCounter(); }, 500);
+        }
+
+        // --- TIMELINE ---
+        function runCounter() {
+            const counterEl = document.getElementById('year-counter');
+            let currentYear = 2006; const targetYear = 2026; const duration = 10000; const intervalTime = duration / (targetYear - currentYear);
+            const interval = setInterval(() => {
+                currentYear++; counterEl.innerText = currentYear; counterEl.style.transform = `scale(1.1)`;
+                setTimeout(() => counterEl.style.transform = `scale(1)`, intervalTime/2);
+                if (currentYear === targetYear) { 
+                    clearInterval(interval); 
+                    document.getElementById('yeay-text').style.opacity = 1;
+                    counterEl.innerText = "20 TAHUN"; 
+                    document.getElementById('sub-counter').innerText = "HAPPY BIRTHDAY";
+                    
+                    const cx = window.innerWidth / 2; const cy = window.innerHeight / 2;
+                    createParticles(cx, cy); setTimeout(() => createParticles(cx - 80, cy - 50), 300); setTimeout(() => createParticles(cx + 80, cy - 50), 500);
+                    
+                    setTimeout(() => {
+                        document.getElementById('scene-2').classList.remove('active');
+                        document.getElementById('scene-reminder').classList.add('active');
+                        setTimeout(() => {
+                            document.getElementById('scene-reminder').classList.remove('active');
+                            document.getElementById('scene-cake').classList.add('active');
+                        }, 3000);
+                    }, 3000);
+                }
+            }, intervalTime);
+        }
+
+        // --- MIC & BLOW LOGIC ---
+        let micContext, analyser, microphone, javascriptNode;
+        let candlesBlowed = false; let blowMeter = 0; const BLOW_THRESHOLD = 20; const BLOW_TARGET = 30; 
+        function initMicrophone() {
+            if (!navigator.mediaDevices) return;
+            const constraints = { audio: true, video: false };
+            navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+                micContext = new AudioContext(); analyser = micContext.createAnalyser(); microphone = micContext.createMediaStreamSource(stream);
+                javascriptNode = micContext.createScriptProcessor(1024, 1, 1); analyser.smoothingTimeConstant = 0.3; analyser.fftSize = 512;
+                microphone.connect(analyser); analyser.connect(javascriptNode); javascriptNode.connect(micContext.destination);
+                javascriptNode.onaudioprocess = function() {
+                    if (candlesBlowed || !document.getElementById('scene-cake').classList.contains('active')) return;
+                    var array = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(array);
+                    var values = 0; for (var i = 0; i < array.length; i++) { values += array[i]; } var average = values / array.length;
+                    const flames = document.querySelectorAll('.real-flame'); const meterFill = document.getElementById('blow-meter-fill');
+                    if (average > BLOW_THRESHOLD) { blowMeter++; flames.forEach(f => f.classList.add('blowing')); } else { blowMeter = Math.max(0, blowMeter - 0.5); flames.forEach(f => f.classList.remove('blowing')); }
+                    let progress = Math.min((blowMeter / BLOW_TARGET) * 100, 100); meterFill.style.width = `${progress}%`;
+                    if (blowMeter >= BLOW_TARGET) blowCandlesOut();
+                }
+            }).catch(err => console.log("Mic error: " + err));
+        }
+        function forceBlowOut() { if(!candlesBlowed) blowCandlesOut(); }
+        function blowCandlesOut() {
+            if(candlesBlowed) return; candlesBlowed = true;
+            const flames = document.querySelectorAll('.real-flame'); const smokes = document.querySelectorAll('.smoke');
+            flames.forEach((f, index) => { f.classList.remove('blowing'); f.classList.add('out'); setTimeout(() => { smokes[index].classList.add('puff'); }, index * 150); });
+            document.getElementById('cake-status-text').innerText = "YEAYYY, lilinnya padamm";
+            const micCont = document.getElementById('mic-container');
+            micCont.style.opacity = 0; micCont.style.transform = "translateY(-20px)";
+            setTimeout(() => { micCont.style.display = 'none'; document.getElementById('wish-confirmation').classList.add('visible'); }, 800);
+            if(javascriptNode) { javascriptNode.onaudioprocess = null; } if(micContext) { micContext.close(); }
+        }
+
+        // --- CONFIRMATION & ZOOM ---
+        function handleBelum() { const toast = document.getElementById('custom-toast'); toast.style.opacity = 1; setTimeout(() => { toast.style.opacity = 0; }, 3000); }
+        function handleSudah() {
+            document.getElementById('scene-cake').classList.remove('active');
+            setTimeout(() => { document.getElementById('scene-3').classList.add('active'); }, 1000);
+        }
+        let isZoomed = false;
+        function triggerZoom() {
+            if(isZoomed) return; isZoomed = true;
+            document.getElementById('scene-3').classList.add('zoomed');
+            document.getElementById('env-hint').style.display = 'none';
+            setTimeout(typeWriter, 1600);
+        }
+
+        // --- TYPEWRITER & FIREWORKS ---
+        function typeWriter() {
+            const el = document.getElementById('letter-content'); let i = 0; const speed = 50; 
+            document.querySelector('#paper-view .cursor').style.display = 'inline-block';
+            
+            function type() { 
+                if (i < messageText.length) { 
+                    el.textContent += messageText.charAt(i); 
+                    i++; 
+                    setTimeout(type, speed); 
+                } else { 
+                    document.querySelector('#paper-view .cursor').style.display = 'none'; 
+                    enableFireworks(); 
+                } 
+            } type();
+        }
+        function enableFireworks() { const layer = document.getElementById('click-layer'); const hint = document.getElementById('hint-text'); layer.style.display = 'block'; setTimeout(() => { hint.style.transition = "opacity 2s"; hint.style.opacity = 0.8; }, 500); }
+
+        // --- BACKGROUND ---
+        const canvas = document.getElementById('canvas-bg'); const ctx = canvas.getContext('2d'); let width, height, stars = [];
+        function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; initStars(); }
+        function initStars() { stars = []; for (let i = 0; i < 150; i++) { stars.push({ x: Math.random() * width, y: Math.random() * height, size: Math.random() * 2, speed: Math.random() * 0.2 + 0.1 }); }}
+        function animateStars() { ctx.clearRect(0,0,width,height); stars.forEach(star => { ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2); ctx.fill(); star.y -= star.speed; if (star.y < 0) { star.y = height; star.x = Math.random() * width; } }); requestAnimationFrame(animateStars); }
+        window.addEventListener('resize', resize); resize(); animateStars();
+
+        // --- BURST FIREWORKS ---
+        const fwCanvas = document.getElementById('fireworks'); const fwCtx = fwCanvas.getContext('2d'); fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight; let particles = [];
+        function launchFirework(e) { createParticles(e.clientX, e.clientY); if (navigator.vibrate) navigator.vibrate(30); }
+        function createParticles(x, y) {
+            const particleCount = 60; const palette = [0, 45, 120, 210, 280, 330]; const baseHue = palette[Math.floor(Math.random() * palette.length)];
+            for (let i = 0; i < particleCount; i++) {
+                const finalHue = baseHue + (Math.random() * 20 - 10);
+                const speed = Math.random() * 15 + 5; const angle = Math.random() * Math.PI * 2;
+                particles.push({ x: x, y: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 100, color: `hsl(${finalHue}, 100%, 60%)`, size: Math.random() * 4 + 2 });
+            }
+        }
+        function animateFireworks() {
+            fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height); 
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                fwCtx.fillStyle = p.color; fwCtx.beginPath(); fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2); fwCtx.fill();
+                p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94; p.vy += 0.05; p.life--; p.size *= 0.96;
+                if (p.life <= 0) { particles.splice(i, 1); i--; }
+            } requestAnimationFrame(animateFireworks);
+        }
+        window.addEventListener('resize', () => { fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight; }); animateFireworks();
+    </script>
+</body>
+</html>
